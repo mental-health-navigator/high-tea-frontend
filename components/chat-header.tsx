@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import { useSidebar } from './ui/sidebar';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { type VisibilityType } from './visibility-selector';
 import type { Session } from 'next-auth';
 import Image from 'next/image';
@@ -26,6 +26,11 @@ function PureChatHeader({
   const router = useRouter();
   const { open } = useSidebar();
 
+  const handleQuickClose = useCallback(() => {
+    // Replace current page in history to prevent back button from returning here
+    window.location.replace('https://www.google.com/search?q=dominos+pizza');
+  }, []);
+
   return (
     <header className="flex sticky top-0 py-1.5 items-center px-2 gap-2 justify-between m-3">
       <div className="md:hidden">
@@ -39,7 +44,14 @@ function PureChatHeader({
           <Button variant={'ghost'}>About</Button>
         </div>
       </div>
-      <Button variant={'secondary'}>Quick Close</Button>
+      <Button
+        variant={'secondary'}
+        onPointerDown={handleQuickClose}
+        aria-label="Quick exit - redirects to Google search"
+        className="text-[#606C38]"
+      >
+        Quick Close
+      </Button>
     </header>
   );
 }

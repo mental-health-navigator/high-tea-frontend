@@ -3,20 +3,14 @@
 import type { User } from 'next-auth';
 import { useRouter } from 'next/navigation';
 
-import { PlusIcon } from '@/components/icons';
-import { SidebarHistory } from '@/components/sidebar-history';
-import { SidebarUserNav } from '@/components/sidebar-user-nav';
-import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
   useSidebar,
 } from '@/components/ui/sidebar';
-import Link from 'next/link';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import Image from 'next/image';
+import { Button } from './ui/button';
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -25,7 +19,19 @@ export function AppSidebar({ user }: { user: User | undefined }) {
   return (
     <Sidebar className="group-data-[side=left]:border-r-0">
       <SidebarHeader>
-        <SidebarMenu>
+        <Image
+          src="/images/logo.png"
+          alt="Logo"
+          width={132}
+          height={32}
+          className="m-2"
+        />
+        <div className="flex flex-col gap-2">
+          <Button variant={'default'}>Search</Button>
+          <Button variant={'ghost'}>Help</Button>
+          <Button variant={'ghost'}>About</Button>
+        </div>
+        {/* <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
             <Link
               href="/"
@@ -56,12 +62,10 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               <TooltipContent align="end">New Chat</TooltipContent>
             </Tooltip>
           </div>
-        </SidebarMenu>
+        </SidebarMenu> */}
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarHistory user={user} />
-      </SidebarContent>
-      <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
+      <SidebarContent>{/* <SidebarHistory user={user} /> */}</SidebarContent>
+      {/* <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter> */}
     </Sidebar>
   );
 }

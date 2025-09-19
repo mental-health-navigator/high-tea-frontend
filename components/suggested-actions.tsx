@@ -65,7 +65,7 @@ function PureSuggestedActions({
                 parts: [{ type: 'text', text: suggestedAction.action }],
               });
             }}
-            className="text-left border rounded-full px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-center items-start bg-background/80"
+            className="text-left border rounded-full px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-center items-center bg-background/80"
           >
             <span className="font-medium">{suggestedAction.title}</span>
           </Button>

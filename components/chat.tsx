@@ -22,6 +22,7 @@ import { useAutoResume } from '@/hooks/use-auto-resume';
 import { ChatSDKError } from '@/lib/errors';
 import type { Attachment, ChatMessage } from '@/lib/types';
 import { useDataStream } from './data-stream-provider';
+import Image from 'next/image';
 
 export function Chat({
   id,
@@ -129,6 +130,20 @@ export function Chat({
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
+        <Image
+          src="/images/brush.png"
+          alt="Brush"
+          width={300}
+          height={300}
+          className="fixed right-0 top-0 w-full md:w-1/2 xl:w-1/3 "
+        />
+        <Image
+          src="/images/brush.png"
+          alt="Brush"
+          width={300}
+          height={300}
+          className="fixed bottom-0 left-0 w-full md:w-1/2 xl:w-1/3 rotate-180"
+        />
         <ChatHeader
           chatId={id}
           selectedModelId={initialChatModel}

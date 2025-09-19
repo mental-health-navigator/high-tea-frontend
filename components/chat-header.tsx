@@ -9,6 +9,7 @@ import type { Session } from 'next-auth';
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { SidebarToggle } from './sidebar-toggle';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 function PureChatHeader({
   chatId,
@@ -28,7 +29,7 @@ function PureChatHeader({
 
   const handleQuickClose = useCallback(() => {
     // Replace current page in history to prevent back button from returning here
-    window.location.replace('https://www.google.com/search?q=dominos+pizza');
+    window.location.replace('https://www.google.com');
   }, []);
 
   return (
@@ -44,14 +45,21 @@ function PureChatHeader({
           <Button variant={'ghost'}>About</Button>
         </div>
       </div>
-      <Button
-        variant={'secondary'}
-        onPointerDown={handleQuickClose}
-        aria-label="Quick exit - redirects to Google search"
-        className="text-[#606C38]"
-      >
-        Quick Close
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant={'secondary'}
+            onPointerDown={handleQuickClose}
+            aria-label="Quick exit - redirects to Google search"
+            className="!text-[#606C38] !bg-background/80 hover:!bg-background/90"
+          >
+            Quick Close
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent align="start">
+          This will navigate you to Google search
+        </TooltipContent>
+      </Tooltip>
     </header>
   );
 }

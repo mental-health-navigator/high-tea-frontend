@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import Image from 'next/image';
 import { Button } from './ui/button';
+import { PrivacyDialogButton } from './privacy-dialog-button';
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -28,7 +29,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         />
         <div className="flex flex-col gap-2">
           <Button variant={'default'}>Search</Button>
-          <Button variant={'ghost'}>Help</Button>
+          <PrivacyDialogButton />
           <Button variant={'ghost'}>About</Button>
         </div>
         {/* <SidebarMenu>

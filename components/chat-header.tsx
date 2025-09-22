@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 
 import { useSidebar } from './ui/sidebar';
 import { memo, useCallback } from 'react';
-import { type VisibilityType } from './visibility-selector';
+import type { VisibilityType } from './visibility-selector';
 import type { Session } from 'next-auth';
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { SidebarToggle } from './sidebar-toggle';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { PrivacyDialogButton } from './privacy-dialog-button';
 
 function PureChatHeader({
   chatId,
@@ -41,7 +42,7 @@ function PureChatHeader({
         <Image src="/images/logo.png" alt="Logo" width={132} height={32} />
         <div className="flex gap-12">
           <Button variant={'default'}>Search</Button>
-          <Button variant={'ghost'}>Help</Button>
+          <PrivacyDialogButton />
           <Button variant={'ghost'}>About</Button>
         </div>
       </div>

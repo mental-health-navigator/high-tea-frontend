@@ -142,7 +142,7 @@ export function Chat({
           alt="Brush"
           width={300}
           height={300}
-          className="fixed bottom-0 left-0 w-full md:w-1/2 xl:w-1/3 rotate-180"
+          className="fixed bottom-0 left-0 w-full md:w-1/2 xl:w-1/3 rotate-180 z-0"
         />
         <ChatHeader
           chatId={id}

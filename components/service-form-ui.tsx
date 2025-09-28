@@ -53,6 +53,7 @@ export function ServiceFormUI({
               <p id="serviceName-error" className="text-sm text-red-600">{errors.serviceName}</p>
             )}
           </div>
+
           {/* Organisation / Clinic */}
           <div className="flex flex-col gap-1">
             <label htmlFor="organization" className="font-medium">Organisation / Clinic</label>
@@ -70,6 +71,7 @@ export function ServiceFormUI({
               <p id="organization-error" className="text-sm text-red-600">{errors.organization}</p>
             )}
           </div>
+
           {/* Category / Type */}
           <div className="flex flex-col gap-1">
             <label htmlFor="category" className="font-medium">Category / Type</label>
@@ -87,6 +89,7 @@ export function ServiceFormUI({
               <p id="category-error" className="text-sm text-red-600">{errors.category}</p>
             )}
           </div>
+
           {/* Eligibility */}
           <div className="flex flex-col gap-1">
             <label htmlFor="eligibility" className="font-medium">Eligibility</label>
@@ -104,6 +107,7 @@ export function ServiceFormUI({
               <p id="eligibility-error" className="text-sm text-red-600">{errors.eligibility}</p>
             )}
           </div>
+
           {/* Address */}
           <div className="flex flex-col gap-1">
             <label htmlFor="address" className="font-medium">
@@ -124,6 +128,7 @@ export function ServiceFormUI({
               <p id="address-error" className="text-sm text-red-600">{errors.address}</p>
             )}
           </div>
+
           {/* Contact */}
           <div className="flex flex-col gap-1">
             <label htmlFor="contact" className="font-medium">
@@ -144,6 +149,7 @@ export function ServiceFormUI({
               <p id="contact-error" className="text-sm text-red-600">{errors.contact}</p>
             )}
           </div>
+
           {/* Availability */}
           <div className="flex flex-col gap-1">
             <label htmlFor="availability" className="font-medium">Availability / Hours</label>
@@ -161,6 +167,7 @@ export function ServiceFormUI({
               <p id="availability-error" className="text-sm text-red-600">{errors.availability}</p>
             )}
           </div>
+
           <div className="flex gap-2 mt-4">
             <Button type="button" variant="outline" className="flex-1" onClick={onCancel}>Cancel</Button>
             <Button

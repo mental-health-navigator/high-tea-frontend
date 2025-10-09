@@ -1,7 +1,7 @@
 'use client';
 
 import type { User } from 'next-auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 import {
   Sidebar,
@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/sidebar';
 import Image from 'next/image';
 import { Button } from './ui/button';
-import { PrivacyDialogButton } from './privacy-dialog-button';
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
   return (
@@ -28,9 +28,27 @@ export function AppSidebar({ user }: { user: User | undefined }) {
           className="m-2"
         />
         <div className="flex flex-col gap-2">
-          <Button variant={'default'}>Search</Button>
-          <PrivacyDialogButton />
-          <Button variant={'ghost'}>About</Button>
+          <Button
+            variant={pathname === '/' ? 'default' : 'ghost'}
+            onClick={() => router.push('/')}
+            className={pathname === '/' ? 'font-bold' : ''}
+          >
+            Search
+          </Button>
+          <Button
+            variant={pathname === '/help' ? 'default' : 'ghost'}
+            onClick={() => router.push('/help')}
+            className={pathname === '/help' ? 'font-bold' : ''}
+          >
+            Help
+          </Button>
+          <Button
+            variant={pathname === '/about' ? 'default' : 'ghost'}
+            onClick={() => router.push('/about')}
+            className={pathname === '/about' ? 'font-bold' : ''}
+          >
+            About
+          </Button>
         </div>
         {/* <SidebarMenu>
           <div className="flex flex-row justify-between items-center">

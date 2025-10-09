@@ -1,4 +1,6 @@
 import type { Preview } from '@storybook/nextjs-vite';
+
+import { ThemeProvider } from '../components/theme-provider';
 import '../app/globals.css';
 
 const preview: Preview = {
@@ -19,15 +21,13 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => (
-      <>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <style jsx global>{`
           @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
-          
           :root {
             --font-geist: 'Geist', sans-serif;
             --font-geist-mono: 'Geist Mono', monospace;
           }
-          
           body {
             font-family: var(--font-geist);
           }
@@ -35,7 +35,7 @@ const preview: Preview = {
         <div className="min-h-screen bg-background antialiased">
           <Story />
         </div>
-      </>
+      </ThemeProvider>
     ),
   ],
 };

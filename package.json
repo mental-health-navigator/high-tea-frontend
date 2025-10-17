@@ -17,6 +17,7 @@
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
     "test": "export PLAYWRIGHT=True && pnpm exec playwright test",
+    "test:ui": "export PLAYWRIGHT=True && pnpm exec playwright test --ui",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
@@ -95,8 +96,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@chromatic-com/playwright": "^0.12.7",
     "@chromatic-com/storybook": "^4.1.1",
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "^1.55.0",
     "@storybook/addon-a11y": "^9.1.7",
     "@storybook/addon-docs": "^9.1.7",
     "@storybook/addon-onboarding": "^9.1.7",

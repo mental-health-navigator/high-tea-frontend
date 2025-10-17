@@ -19,7 +19,7 @@
     "test": "export PLAYWRIGHT=True && pnpm exec playwright test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_241bfab57482b0a"
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.30",

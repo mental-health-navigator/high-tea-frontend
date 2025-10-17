@@ -1,29 +1,14 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-
-import { useSidebar } from './ui/sidebar';
 import { memo, useCallback } from 'react';
-import type { VisibilityType } from './visibility-selector';
-import type { Session } from 'next-auth';
 import Image from 'next/image';
 import { Button } from './ui/button';
 import { SidebarToggle } from './sidebar-toggle';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { useSidebar } from './ui/sidebar';
 
-function PureChatHeader({
-  chatId,
-  selectedModelId,
-  selectedVisibilityType,
-  isReadonly,
-  session,
-}: {
-  chatId: string;
-  selectedModelId: string;
-  selectedVisibilityType: VisibilityType;
-  isReadonly: boolean;
-  session: Session;
-}) {
+function PurePageHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const { open } = useSidebar();
@@ -80,6 +65,4 @@ function PureChatHeader({
   );
 }
 
-export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
-  return prevProps.selectedModelId === nextProps.selectedModelId;
-});
+export const PageHeader = memo(PurePageHeader);

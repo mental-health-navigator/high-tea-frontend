@@ -130,20 +130,38 @@ export function Chat({
   return (
     <>
       <div className="flex flex-col min-w-0 h-dvh bg-background">
-        <Image
-          src="/images/brush.png"
-          alt="Brush"
-          width={300}
-          height={300}
-          className="fixed right-0 top-0 w-full md:w-1/2 xl:w-1/3 "
-        />
-        <Image
-          src="/images/brush.png"
-          alt="Brush"
-          width={300}
-          height={300}
-          className="fixed bottom-0 left-0 w-full md:w-1/2 xl:w-1/3 rotate-180 z-0"
-        />
+  {/* Top right brush, always visible and responsive */}
+  <div
+    className="pointer-events-none fixed z-0"
+    style={{
+      top: -80,
+      right: -150,
+      width: '700px', 
+      height: '700px',
+      maxWidth: '100vw',
+      zIndex: 0,
+    }}
+  >
+    <Image
+      src="/images/brush-new.png"
+      alt="Brush Top Right"
+      width={1000}
+      height={1000}
+      className="animate-floatY"
+      priority
+    />
+  </div>
+  {/* Bottom left brush, center aligned to bottom left, moved up */}
+  <div className="pointer-events-none fixed z-0" style={{left:100, bottom: 250, width: '700px', height: '700px', transform: 'translate(-50%,50%) rotate(180deg)'}}>
+          <Image
+            src="/images/brush-new.png"
+            alt="Brush Bottom Left"
+            width={1000}
+            height={1000}
+            className="animate-floatY"
+            priority
+          />
+        </div>
         <ChatHeader
           chatId={id}
           selectedModelId={initialChatModel}

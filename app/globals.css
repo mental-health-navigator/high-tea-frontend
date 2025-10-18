@@ -162,3 +162,15 @@
 .suggestion-highlight {
     @apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
 }
+
+@keyframes floatY {
+  0% { transform: translateY(0) scale(1); }
+  20% { transform: translateY(-40px) scale(1.04); }
+  50% { transform: translateY(40px) scale(1.02); }
+  80% { transform: translateY(-30px) scale(1.03); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.animate-floatY {
+  animation: floatY 7s ease-in-out infinite;
+}

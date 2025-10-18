@@ -45,15 +45,6 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Debug environment variables
-        env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
-        run: |
-          echo "AUTH_SECRET is set: $([ -n "$AUTH_SECRET" ] && echo 'yes' || echo 'no')"
-          echo "POSTGRES_URL is set: $([ -n "$POSTGRES_URL" ] && echo 'yes' || echo 'no')"
-          echo "POSTGRES_URL starts with: $(echo $POSTGRES_URL | cut -c1-20)"
-
       - name: Run Playwright tests
         env:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}

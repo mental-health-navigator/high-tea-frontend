@@ -46,10 +46,13 @@ export default defineConfig<ChromaticConfig>({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
     disableAutoSnapshot: true,
+
+    /* Increase navigation timeout in CI due to database latency */
+    navigationTimeout: process.env.CI ? 45 * 1000 : 30 * 1000,
   },
 
   /* Configure global timeout for each test */
-  timeout: 30 * 1000, // 30 seconds
+  timeout: process.env.CI ? 60 * 1000 : 30 * 1000, // 60s in CI, 30s locally
   expect: {
     timeout: 30 * 1000,
   },

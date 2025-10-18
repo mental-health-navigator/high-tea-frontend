@@ -6,10 +6,13 @@ import type { ChromaticConfig } from '@chromatic-com/playwright';
  * https://github.com/motdotla/dotenv
  */
 import { config } from 'dotenv';
+import { existsSync } from 'node:fs';
 
-config({
-  path: '.env.local',
-});
+if (existsSync('.env.local')) {
+  config({
+    path: '.env.local',
+  });
+}
 
 /* Use process.env.PORT by default and fallback to port 3000 */
 const PORT = process.env.PORT || 3000;

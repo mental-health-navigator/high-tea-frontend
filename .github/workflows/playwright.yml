@@ -45,11 +45,16 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Create environment file
+        run: |
+          cat > .env.local << EOF
+          AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+          POSTGRES_URL=${{ secrets.POSTGRES_URL }}
+          EOF
+
       - name: Run Playwright tests
         env:
-          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
           PLAYWRIGHT: "True"
         run: pnpm test
 

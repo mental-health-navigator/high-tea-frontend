@@ -17,7 +17,9 @@
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
     "test": "export PLAYWRIGHT=True && pnpm exec playwright test",
-    "test:ui": "export PLAYWRIGHT=True && pnpm exec playwright test --ui",
+    "test:ui": "export PLAYWRIGHT=True && pnpm exec playwright test --ui --headed",
+    "test:debug": "export PLAYWRIGHT=True && pnpm exec playwright test --debug",
+    "test:headed": "export PLAYWRIGHT=True && pnpm exec playwright test --headed",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"

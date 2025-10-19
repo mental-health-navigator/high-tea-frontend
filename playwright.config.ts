@@ -1,14 +1,18 @@
 import { defineConfig, devices } from '@playwright/test';
+import type { ChromaticConfig } from '@chromatic-com/playwright';
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
 import { config } from 'dotenv';
+import { existsSync } from 'node:fs';
 
-config({
-  path: '.env.local',
-});
+if (existsSync('.env.local')) {
+  config({
+    path: '.env.local',
+  });
+}
 
 /* Use process.env.PORT by default and fallback to port 3000 */
 const PORT = process.env.PORT || 3000;
@@ -22,7 +26,7 @@ const baseURL = `http://localhost:${PORT}`;
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<ChromaticConfig>({
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -41,12 +45,16 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
+    disableAutoSnapshot: true,
+
+    /* Increase navigation timeout in CI due to database latency */
+    navigationTimeout: process.env.CI ? 45 * 1000 : 30 * 1000,
   },
 
   /* Configure global timeout for each test */
-  timeout: 240 * 1000, // 120 seconds
+  timeout: process.env.CI ? 60 * 1000 : 30 * 1000, // 60s in CI, 30s locally
   expect: {
-    timeout: 240 * 1000,
+    timeout: 30 * 1000,
   },
 
   /* Configure projects */
@@ -103,5 +111,7 @@ export default defineConfig({
     url: `${baseURL}/ping`,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });

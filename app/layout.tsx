@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
   title: 'Heal Hub',
   description: 'Heal Hub - Your AI-powered health assistant.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export const viewport = {

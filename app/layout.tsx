@@ -7,6 +7,8 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 
+export const runtime = 'edge';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
   title: 'Next.js Chatbot Template',

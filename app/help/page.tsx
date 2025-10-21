@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 
+export const runtime = 'edge';
+
 export default function HelpPage() {
   return (
     <>

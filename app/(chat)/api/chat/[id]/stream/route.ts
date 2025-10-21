@@ -6,6 +6,8 @@ import type { ChatMessage } from '@/lib/types';
 import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
 import { differenceInSeconds } from 'date-fns';
 
+export const runtime = 'edge';
+
 export async function GET(
   _: Request,
   { params }: { params: Promise<{ id: string }> },

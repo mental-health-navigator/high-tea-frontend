@@ -12,8 +12,8 @@ import {
   lt,
   type SQL,
 } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { sql as vercelSql } from '@vercel/postgres';
 
 import {
   user,
@@ -38,9 +38,7 @@ import { ChatSDKError } from '../errors';
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 
-// biome-ignore lint: Forbidden non-null assertion.
-const client = postgres(process.env.POSTGRES_URL!);
-const db = drizzle(client);
+const db = drizzle(vercelSql);
 
 export async function getUser(email: string): Promise<Array<User>> {
   try {

@@ -1,6 +1,7 @@
 <a href="https://high-tea-frontend.vercel.app">
   <img alt="Next.js 15 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
   <h1 align="center">Heal Hub - Mental Health Services Navigator</h1>
+  <span>By the High Tea team</span>
 </a>
 
 <p align="center">
@@ -22,13 +23,6 @@
 ### Core Functionality
 
 - **AI-Powered Chat** - Real-time streaming chat responses powered by OpenAI GPT 5 nano
-- **Document Artifacts** - Create and edit content (text, code, images, spreadsheets) alongside conversations
-- **Persistent Chat History** - Save and resume conversations with full history
-- **File Attachments** - Upload and share files within chat sessions
-- **Smart Suggestions** - AI-powered improvement suggestions for created content
-- **Weather Integration** - Built-in weather tool using Open-Meteo API
-- **Authentication** - Guest login or email/password authentication with session management
-- **Message Voting** - Upvote/downvote messages for feedback
 
 ### Technical Features
 
@@ -72,8 +66,7 @@
 
 ### Database & Storage
 
-- **Neon PostgreSQL** - Serverless database
-- **Drizzle ORM** - Type-safe database toolkit
+- **Supabase** - Postgres database
 - **Vercel Blob** - File storage
 
 ### Development & Testing
@@ -81,13 +74,7 @@
 - **Vitest** - Unit testing
 - **Playwright** - E2E testing
 - **Storybook 9** - Component documentation
-- **Biome** - Fast linting and formatting
 - **pnpm** - Package manager
-
-### Observability
-
-- **OpenTelemetry** - Distributed tracing
-- **Vercel Analytics** - Application analytics
 
 ## Project Structure
 
@@ -281,31 +268,7 @@ pnpm build            # Build for production
 pnpm start            # Start production server
 pnpm lint             # Lint code with Biome
 pnpm format           # Format code with Biome
-pnpm db:migrate       # Run database migrations
-pnpm db:push          # Push schema changes to database
-pnpm db:studio        # Open Drizzle Studio
-pnpm db:seed          # Seed database with test data
 ```
-
-## Database Management
-
-This project uses Drizzle ORM with PostgreSQL. Key commands:
-
-```bash
-# Generate migrations from schema changes
-pnpm db:generate
-
-# Run pending migrations
-pnpm db:migrate
-
-# Push schema directly to database (dev only)
-pnpm db:push
-
-# Open Drizzle Studio (database GUI)
-pnpm db:studio
-```
-
-Database schema is defined in [lib/db/schema.ts](lib/db/schema.ts).
 
 ## Contributing
 

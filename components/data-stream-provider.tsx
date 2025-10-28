@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import type { DataUIPart } from 'ai';
 import type { CustomUIDataTypes } from '@/lib/types';
+import { QueryProvider } from './query-provider';
 
 interface DataStreamContextValue {
   dataStream: DataUIPart<CustomUIDataTypes>[];
@@ -25,9 +26,11 @@ export function DataStreamProvider({
   const value = useMemo(() => ({ dataStream, setDataStream }), [dataStream]);
 
   return (
-    <DataStreamContext.Provider value={value}>
-      {children}
-    </DataStreamContext.Provider>
+    <QueryProvider>
+      <DataStreamContext.Provider value={value}>
+        {children}
+      </DataStreamContext.Provider>
+    </QueryProvider>
   );
 }
 

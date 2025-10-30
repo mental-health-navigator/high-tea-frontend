@@ -2,6 +2,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useCallback,
   type KeyboardEvent,
   type ClipboardEvent,
   type ChangeEvent,
@@ -41,6 +42,7 @@ export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
 }) => {
   const [values, setValues] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const lastCompletedCodeRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (autoFocus && inputRefs.current[0]) {
@@ -48,14 +50,28 @@ export const VerificationCodeInput: React.FC<VerificationCodeInputProps> = ({
     }
   }, [autoFocus]);
 
+  // Memoize the completion handler to prevent duplicate calls
+  const handleCompletion = useCallback(
+    (code: string) => {
+      if (lastCompletedCodeRef.current !== code) {
+        lastCompletedCodeRef.current = code;
+        onComplete?.(code);
+      }
+    },
+    [onComplete],
+  );
+
   useEffect(() => {
     const code = values.join('');
     onChange?.(code);
 
     if (code.length === length && values.every((v) => v !== '')) {
-      onComplete?.(code);
+      handleCompletion(code);
+    } else if (code.length < length) {
+      // Reset when user starts editing
+      lastCompletedCodeRef.current = null;
     }
-  }, [values, length, onChange, onComplete]);
+  }, [values, length, onChange, handleCompletion]);
 
   const handleChange =
     (index: number) => (e: ChangeEvent<HTMLInputElement>) => {

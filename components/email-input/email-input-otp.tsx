@@ -1,53 +1,76 @@
-// Pure UI Component
-
 'use client';
-import Form from 'next/form';
+
+import { useState, type FormEvent } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { EmailSubmitButton } from './email-submit-button';
 
-export interface EmailInputUIProps {
-  onSubmit: (formData: FormData) => void;
+export interface EmailInputOtpProps {
+  /** Callback when email is submitted */
+  onSubmit: (email: string) => void;
+  /** Label text for the input */
   label?: string;
+  /** Placeholder text */
   placeholder?: string;
-  isSuccessful?: boolean;
+  /** Whether submission is in progress */
   isLoading?: boolean;
+  /** Success state */
+  isSuccessful?: boolean;
+  /** Error state */
   isError?: boolean;
+  /** Error message to display */
   errorMessage?: string;
+  /** Disabled state */
   disabled?: boolean;
+  /** Additional className */
   className?: string;
-  value?: string;
+  /** Initial email value */
+  defaultValue?: string;
+  /** Auto-focus on mount */
   autoFocus?: boolean;
 }
 
-export function EmailInputUI({
+/**
+ * Email input component specifically for OTP verification flow
+ * Simplified version without form action, uses callback instead
+ */
+export function EmailInputOtp({
   onSubmit,
   label = 'What is your email address?',
   placeholder = 'you@email.com',
-  isSuccessful = false,
   isLoading = false,
+  isSuccessful = false,
   isError = false,
   errorMessage = 'Invalid email address',
   disabled = false,
   className = '',
-  value,
+  defaultValue = '',
   autoFocus = true,
-}: EmailInputUIProps) {
+}: EmailInputOtpProps) {
+  const [email, setEmail] = useState(defaultValue);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (email && !isLoading && !isSuccessful) {
+      onSubmit(email);
+    }
+  };
+
   return (
-    <Form
-      action={onSubmit}
+    <form
+      onSubmit={handleSubmit}
       className={`flex flex-col gap-4 mx-auto md:max-w-3xl w-full pb-4 md:pb-6 px-4 ${className}`}
     >
       <div className="flex flex-col gap-2 w-full relative">
         <Label
-          htmlFor="email"
+          htmlFor="email-otp"
           className="text-zinc-600 font-normal dark:text-zinc-400"
         >
           {label}
         </Label>
         <div className="relative">
           <Input
-            id="email"
+            id="email-otp"
             name="email"
             className={`bg-muted text-base md:text-base py-2 px-3 pr-10 h-auto ${
               isError ? 'border-destructive focus:ring-destructive' : ''
@@ -58,7 +81,8 @@ export function EmailInputUI({
             required
             autoFocus={autoFocus}
             disabled={disabled || isSuccessful || isLoading}
-            defaultValue={value}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <EmailSubmitButton
             isSuccessful={isSuccessful}
@@ -69,6 +93,6 @@ export function EmailInputUI({
           <p className="text-sm text-destructive">{errorMessage}</p>
         )}
       </div>
-    </Form>
+    </form>
   );
 }

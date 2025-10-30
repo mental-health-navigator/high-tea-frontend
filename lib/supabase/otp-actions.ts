@@ -1,0 +1,103 @@
+'use server';
+
+import { supabase } from './client';
+
+export interface OTPActionState {
+  status: 'idle' | 'success' | 'failed' | 'invalid_data';
+  message?: string;
+}
+
+/**
+ * Sends an OTP to the provided email address using Supabase Auth
+ */
+export async function sendOtpToEmail(
+  email: string,
+): Promise<OTPActionState> {
+  try {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return {
+        status: 'invalid_data',
+        message: 'Please enter a valid email address',
+      };
+    }
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: false, // Don't auto-create users, just send OTP
+      },
+    });
+
+    if (error) {
+      console.error('Supabase OTP error:', error);
+      return {
+        status: 'failed',
+        message: error.message || 'Failed to send verification code',
+      };
+    }
+
+    return {
+      status: 'success',
+      message: 'Verification code sent! Check your email.',
+    };
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    return {
+      status: 'failed',
+      message: 'An unexpected error occurred',
+    };
+  }
+}
+
+/**
+ * Verifies an OTP token for the provided email address
+ */
+export async function verifyOtpCode(
+  email: string,
+  token: string,
+): Promise<OTPActionState> {
+  try {
+    // Validate inputs
+    if (!email || !token) {
+      return {
+        status: 'invalid_data',
+        message: 'Email and verification code are required',
+      };
+    }
+
+    if (token.length !== 6 || !/^\d{6}$/.test(token)) {
+      return {
+        status: 'invalid_data',
+        message: 'Verification code must be 6 digits',
+      };
+    }
+
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'email',
+    });
+
+    if (error) {
+      console.error('Supabase OTP verification error:', error);
+      return {
+        status: 'failed',
+        message:
+          error.message || 'Invalid or expired verification code',
+      };
+    }
+
+    return {
+      status: 'success',
+      message: 'Email verified successfully!',
+    };
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    return {
+      status: 'failed',
+      message: 'An unexpected error occurred',
+    };
+  }
+}

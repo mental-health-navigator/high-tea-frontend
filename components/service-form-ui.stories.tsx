@@ -1,23 +1,5 @@
-export const ErrorRequired: Story = {
-  args: {
-    errors: {
-      serviceName: 'Service name is required',
-      address: 'Address is required',
-      contact: 'Contact details are required',
-    },
-  },
-};
-
-export const ErrorInvalidContact: Story = {
-  args: {
-    errors: {
-      contact: 'Please enter a valid phone, email, or website',
-    },
-  },
-};
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { ServiceFormUI } from './service-form-ui';
-
 
 const meta: Meta<typeof ServiceFormUI> = {
   title: 'Components/ServiceFormUI',
@@ -42,19 +24,93 @@ export const Default: Story = {
   args: {},
 };
 
+export const WithValues: Story = {
+  args: {
+    formValues: {
+      service_name: 'Youth Counselling',
+      organisation_name: 'Headspace',
+      campus_name: 'Fitzroy',
+      phone: '+61412345678',
+      email: 'contact@headspace.org.au',
+      website: 'https://headspace.org.au',
+      address: '123 Main Street',
+      suburb: 'Fitzroy',
+      state: 'VIC',
+      postcode: '3065',
+      eligibility_and_description: 'Ages 12-25, no referral required, bulk-billed',
+    },
+  },
+};
+
 export const Loading: Story = {
   args: {
     submitting: true,
+    formValues: {
+      service_name: 'Youth Counselling',
+      address: '123 Main Street',
+    },
   },
 };
 
 export const Success: Story = {
   args: {
     submitted: true,
+    formValues: {
+      service_name: 'Youth Counselling',
+      organisation_name: 'Headspace',
+      campus_name: 'Fitzroy',
+      phone: '+61412345678',
+      email: 'contact@headspace.org.au',
+      website: 'https://headspace.org.au',
+      address: '123 Main Street',
+      suburb: 'Fitzroy',
+      state: 'VIC',
+      postcode: '3065',
+      eligibility_and_description: 'Ages 12-25, no referral required, bulk-billed',
+    },
   },
 };
 
+export const SuccessPartialData: Story = {
+  args: {
+    submitted: true,
+    formValues: {
+      service_name: 'Youth Counselling',
+      organisation_name: 'Headspace',
+      phone: '+61412345678',
+      address: '123 Main Street',
+      state: 'VIC',
+      postcode: '3065',
+    },
+  },
+};
 
+export const ErrorRequired: Story = {
+  args: {
+    errors: {
+      service_name: 'Service name is required',
+      address: 'Address is required',
+    },
+    formValues: {
+      organisation_name: 'Headspace',
+      phone: '+61412345678',
+    },
+  },
+};
+
+export const ErrorInvalidContact: Story = {
+  args: {
+    errors: {
+      email: 'Please enter a valid email address',
+      phone: 'Please enter a valid phone number',
+    },
+    formValues: {
+      service_name: 'Youth Counselling',
+      email: 'invalid-email',
+      phone: 'abc',
+    },
+  },
+};
 
 export const Dark: Story = {
   parameters: {

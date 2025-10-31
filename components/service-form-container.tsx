@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { ServiceFormUI } from './service-form-ui';
 import { ingestJson, type IngestResponse } from '@/lib/api/ingestion';
 import { toast } from 'sonner';
+import { supabase } from '@/lib/supabase/client';
 
 export interface ServiceFormContainerProps {
   className?: string;
@@ -33,7 +34,16 @@ export function ServiceFormContainer({
 
   // React Query mutation for JSON ingestion
   const mutation = useMutation({
-    mutationFn: (payload: typeof formData) => ingestJson(payload),
+    mutationFn: async (payload: typeof formData) => {
+      // Get the current Supabase session for authentication
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+
+      // Call the protected API with the access token
+      return ingestJson(payload, accessToken);
+    },
     onSuccess: (data) => {
       if (data.status === 'created') {
         toast.success('Service created successfully!', {
@@ -104,7 +114,9 @@ export function ServiceFormContainer({
   };
 
   // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,

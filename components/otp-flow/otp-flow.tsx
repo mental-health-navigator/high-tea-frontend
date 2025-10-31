@@ -6,10 +6,11 @@ import { VerificationCodeInput } from '../verification-form-input/verification-f
 import { useOtpVerification } from '@/hooks/use-otp-verification';
 import { Button } from '../ui/button';
 import { ArrowLeft } from 'lucide-react';
+import type { Session } from '@supabase/supabase-js';
 
 export interface OtpFlowProps {
-  /** Callback when verification is complete */
-  onVerified?: (email: string) => void;
+  /** Callback when verification is complete - receives email and session */
+  onVerified?: (email: string, session: Session | null) => void;
   /** Callback when flow encounters an error */
   onError?: (error: string) => void;
   /** Email label text */
@@ -41,6 +42,7 @@ export function OtpFlow({
     error,
     message,
     isLoading,
+    session,
     sendOtp,
     verifyOtp,
     resetFlow,
@@ -53,9 +55,9 @@ export function OtpFlow({
   // Handle verification success
   useEffect(() => {
     if (state === 'verified' && onVerified) {
-      onVerified(email);
+      onVerified(email, session);
     }
-  }, [state, email, onVerified]);
+  }, [state, email, session, onVerified]);
 
   // Handle errors
   useEffect(() => {

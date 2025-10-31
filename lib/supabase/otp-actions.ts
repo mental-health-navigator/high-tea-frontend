@@ -1,10 +1,12 @@
 'use server';
 
 import { supabase } from './client';
+import type { Session } from '@supabase/supabase-js';
 
 export interface OTPActionState {
   status: 'idle' | 'success' | 'failed' | 'invalid_data';
   message?: string;
+  session?: Session;
 }
 
 /**
@@ -26,7 +28,7 @@ export async function sendOtpToEmail(
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        shouldCreateUser: false, // Don't auto-create users, just send OTP
+        shouldCreateUser: true, // Create user account if it doesn't exist
       },
     });
 
@@ -74,7 +76,7 @@ export async function verifyOtpCode(
       };
     }
 
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       email,
       token,
       type: 'email',
@@ -89,9 +91,11 @@ export async function verifyOtpCode(
       };
     }
 
+    // Return the session along with success
     return {
       status: 'success',
       message: 'Email verified successfully!',
+      session: data.session ?? undefined,
     };
   } catch (error) {
     console.error('Error verifying OTP:', error);

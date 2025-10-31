@@ -61,18 +61,30 @@ export async function ingestText(
  * This WILL save the data to the database.
  *
  * @param payload - Service data as JSON object
+ * @param accessToken - Supabase access token for authentication
  * @returns Ingest response with status and reference ID
  */
 export async function ingestJson(
   payload: IngestPayload,
+  accessToken?: string,
 ): Promise<IngestResponse> {
-  const url = new URL('/ingest/json', INGESTION_API_BASE_URL);
+  // Call the protected Next.js API route instead of the external API directly
+  const url = '/api/protected/ingest';
 
-  const response = await fetch(url.toString(), {
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  // Add authorization header if token is provided
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  } else {
+    throw new Error('Authentication required. Please verify your email first.');
+  }
+
+  const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -80,7 +92,17 @@ export async function ingestJson(
     const errorData = await response
       .json()
       .catch(() => ({ detail: 'Unknown error' }));
-    throw new Error(errorData.detail || `API error: ${response.status}`);
+
+    // Handle authentication errors specifically
+    if (response.status === 401) {
+      throw new Error(
+        'Authentication required. Please verify your email first.',
+      );
+    }
+
+    throw new Error(
+      errorData.detail || errorData.error || `API error: ${response.status}`,
+    );
   }
 
   return response.json();

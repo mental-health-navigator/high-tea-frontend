@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { sendOtpToEmail, verifyOtpCode } from '@/lib/supabase/otp-actions';
+import { supabase } from '@/lib/supabase/client';
+import type { Session } from '@supabase/supabase-js';
 
 export type OTPFlowState =
   | 'idle'
@@ -22,6 +24,8 @@ export interface UseOtpVerificationReturn {
   message: string | null;
   /** Whether the flow is currently processing */
   isLoading: boolean;
+  /** Supabase session after successful verification */
+  session: Session | null;
   /** Send OTP to email */
   sendOtp: (email: string) => Promise<void>;
   /** Verify OTP code */
@@ -41,8 +45,26 @@ export function useOtpVerification(): UseOtpVerificationReturn {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
 
   const isLoading = state === 'sending' || state === 'verifying';
+
+  // Listen for auth state changes and update session
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const sendOtp = useCallback(async (emailAddress: string) => {
     setState('sending');
@@ -72,14 +94,22 @@ export function useOtpVerification(): UseOtpVerificationReturn {
       setError(null);
       setMessage(null);
 
-      const result = await verifyOtpCode(email, code);
+      // Verify OTP directly with client-side Supabase to ensure session is stored in browser
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({
+        email,
+        token: code,
+        type: 'email',
+      });
 
-      if (result.status === 'success') {
-        setState('verified');
-        setMessage(result.message || null);
-      } else {
+      if (verifyError) {
+        console.error('Supabase OTP verification error:', verifyError);
         setState('error');
-        setError(result.message || 'Invalid or expired verification code');
+        setError(verifyError.message || 'Invalid or expired verification code');
+      } else {
+        setState('verified');
+        setMessage('Email verified successfully!');
+        // Session is automatically stored by Supabase client
+        setSession(data.session);
       }
     },
     [email],
@@ -104,6 +134,7 @@ export function useOtpVerification(): UseOtpVerificationReturn {
     error,
     message,
     isLoading,
+    session,
     sendOtp,
     verifyOtp,
     resetFlow,

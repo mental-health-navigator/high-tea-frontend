@@ -23,6 +23,8 @@ import { ChatSDKError } from '@/lib/errors';
 import type { Attachment, ChatMessage } from '@/lib/types';
 import { useDataStream } from './data-stream-provider';
 import Image from 'next/image';
+import { ServiceFormContainer } from './service-form-container';
+import { OtpFlow } from './otp-flow';
 // import { ServiceFormContainer } from './service-form-container';
 
 export function Chat({
@@ -208,13 +210,13 @@ export function Chat({
             />
           )}
         </form>
-        {/* <OtpFlow /> */}
-        {/* <ServiceFormContainer
+        <OtpFlow />
+        <ServiceFormContainer
           onSuccess={(data) => {
             console.log({ data });
           }}
           onCancel={() => console.log('Form cancelled')}
-        /> */}
+        />
       </div>
 
       <Artifact

@@ -20,14 +20,25 @@ export async function middleware(request: NextRequest) {
 
   // Protect /api/protected/* routes with Supabase auth
   if (pathname.startsWith('/api/protected/')) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    let supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+    // In CI or test environments, use mock credentials if real ones aren't provided
     if (!supabaseUrl || !supabaseAnonKey) {
-      return NextResponse.json(
-        { error: 'Supabase configuration missing' },
-        { status: 500 },
-      );
+      const isCI = process.env.CI === 'true';
+      const isPlaywright = process.env.PLAYWRIGHT === 'True';
+
+      if (isCI || isPlaywright) {
+        // Provide mock Supabase credentials for testing
+        supabaseUrl = 'https://mock-supabase-url.supabase.co';
+        supabaseAnonKey = 'mock-anon-key-for-testing';
+        console.warn('[Middleware] Using mock credentials for CI/test environment');
+      } else {
+        return NextResponse.json(
+          { error: 'Supabase configuration missing' },
+          { status: 500 },
+        );
+      }
     }
 
     // Get auth token from Authorization header

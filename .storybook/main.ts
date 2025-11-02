@@ -14,5 +14,15 @@ const config: StorybookConfig = {
     options: {},
   },
   staticDirs: ['../public'],
+  env: (config) => ({
+    ...config,
+    NEXT_PUBLIC_SUPABASE_URL:
+      process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY:
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
+    NEXT_PUBLIC_HIGHTEA_API_BASE_URL:
+      process.env.NEXT_PUBLIC_HIGHTEA_API_BASE_URL ||
+      'https://hightea-backend-k6jg6ofeqq-ts.a.run.app/',
+  }),
 };
 export default config;

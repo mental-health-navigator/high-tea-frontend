@@ -1,12 +1,10 @@
 'use client';
 
-import { DefaultChatTransport } from 'ai';
-import { useChat } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
-import { fetcher, fetchWithErrorHandlers, generateUUID } from '@/lib/utils';
+import { fetcher } from '@/lib/utils';
 import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
@@ -25,7 +23,8 @@ import { useDataStream } from './data-stream-provider';
 import Image from 'next/image';
 import { ServiceFormContainer } from './service-form-container';
 import { OtpFlow } from './otp-flow';
-// import { ServiceFormContainer } from './service-form-container';
+import { ServicesList } from './services-list';
+import { useSimpleChat } from '@/hooks/use-simple-chat';
 
 export function Chat({
   id,
@@ -62,33 +61,24 @@ export function Chat({
     stop,
     regenerate,
     resumeStream,
-  } = useChat<ChatMessage>({
+    services,
+    top1Similarity,
+    disambiguationNeeded,
+    requestServiceChange,
+  } = useSimpleChat({
     id,
     messages: initialMessages,
-    experimental_throttle: 100,
-    generateId: generateUUID,
-    transport: new DefaultChatTransport({
-      api: '/api/chat',
-      fetch: fetchWithErrorHandlers,
-      prepareSendMessagesRequest({ messages, id, body }) {
-        return {
-          body: {
-            id,
-            message: messages.at(-1),
-            selectedChatModel: initialChatModel,
-            selectedVisibilityType: visibilityType,
-            ...body,
-          },
-        };
-      },
-    }),
     onData: (dataPart) => {
+      console.log('Received data part:', dataPart);
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
     },
-    onFinish: () => {
+    onFinish: (result) => {
+      console.log('Chat finished with result:', result);
+      console.log('Current messages:', messages);
       mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
     onError: (error) => {
+      console.error('Chat error:', error);
       if (error instanceof ChatSDKError) {
         toast({
           type: 'error',
@@ -192,6 +182,17 @@ export function Chat({
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
         />
+
+        {services.length > 0 && (
+          <div className="mx-auto px-4 w-full md:max-w-3xl mb-4">
+            <ServicesList
+              services={services}
+              top1Similarity={top1Similarity}
+              disambiguationNeeded={disambiguationNeeded}
+              requestServiceChange={requestServiceChange}
+            />
+          </div>
+        )}
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
           {!isReadonly && (

@@ -1,7 +1,8 @@
 // API client for HealHub Service Ingestion API
 
 export const INGESTION_API_BASE_URL =
-  'https://hh-service-ingestion-api-30236141423.australia-southeast1.run.app';
+  process.env.NEXT_PUBLIC_HIGHTEA_API_BASE_URL ||
+  'https://hightea-backend-k6jg6ofeqq-ts.a.run.app/';
 
 // Types for /ingest/text endpoint
 export interface TextIngestRequest {

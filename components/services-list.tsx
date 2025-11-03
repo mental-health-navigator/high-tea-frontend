@@ -37,12 +37,12 @@ export function ServicesList({
           <h3 className="text-lg font-semibold flex items-center gap-2">
             {disambiguationNeeded ? (
               <>
-                <AlertCircle className="w-5 h-5 text-yellow-600" />
+                <AlertCircle className="size-5 text-yellow-600" />
                 Multiple Options Available
               </>
             ) : (
               <>
-                <CheckCircle className="w-5 h-5 text-green-600" />
+                <CheckCircle className="size-5 text-green-600" />
                 Recommended Services
               </>
             )}
@@ -55,7 +55,7 @@ export function ServicesList({
         </div>
 
         {confidence && (
-          <div className="flex-shrink-0 text-right">
+          <div className="shrink-0 text-right">
             <div className="text-xs text-muted-foreground">Confidence</div>
             <div className={`text-sm font-bold ${confidence.color}`}>
               {confidence.level}
@@ -74,9 +74,9 @@ export function ServicesList({
       )}
 
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-        {services.map((service) => (
+        {services.map((service, i) => (
           <ServiceCard
-            key={service.service_campus_key}
+            key={`${i} + ${service.name}`}
             service={service}
             similarity={service.cosine_similarity ?? undefined}
           />

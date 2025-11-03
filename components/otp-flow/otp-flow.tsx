@@ -5,6 +5,7 @@ import { EmailInputOtp } from '../email-input/email-input-otp';
 import { VerificationCodeInput } from '../verification-form-input/verification-form-input';
 import { useOtpVerification } from '@/hooks/use-otp-verification';
 import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { ArrowLeft } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 
@@ -73,7 +74,11 @@ export function OtpFlow({
 
   const handleCodeComplete = async (code: string) => {
     // Prevent duplicate submissions of the same code
-    if (lastSubmittedCodeRef.current === code || isLoading || state === 'verified') {
+    if (
+      lastSubmittedCodeRef.current === code ||
+      isLoading ||
+      state === 'verified'
+    ) {
       return;
     }
 
@@ -128,63 +133,61 @@ export function OtpFlow({
 
       {/* Verification Code Input Step */}
       {showCodeInput && (
-        <div className="flex flex-col gap-4 mx-auto md:max-w-3xl w-full pb-4 md:pb-6 px-4">
-          {/* Back button */}
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={goBack}
-            disabled={isLoading || state === 'verified'}
-            className="self-start -ml-2"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="verification-code"
-              className="text-zinc-600 font-normal dark:text-zinc-400"
-            >
-              {codeLabel}
-            </label>
-            <p className="text-sm text-muted-foreground mb-2">
-              We sent a 6-digit code to <strong>{email}</strong>
-            </p>
-
-            <VerificationCodeInput
-              length={6}
-              onComplete={handleCodeComplete}
-              error={isCodeStepError}
-              disabled={isLoading || state === 'verified'}
-              autoFocus={autoFocus}
-            />
-
-            {isCodeStepError && error && (
-              <p className="text-sm text-destructive mt-2">{error}</p>
-            )}
-
-            {state === 'verified' && message && (
-              <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                {message}
+        <div className="mx-auto md:max-w-3xl w-full pb-4 md:pb-6 px-4">
+          <Card className="w-full">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl">{codeLabel}</CardTitle>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={goBack}
+                  disabled={isLoading || state === 'verified'}
+                >
+                  <ArrowLeft className="size-4 mr-2" />
+                  Back
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                We sent a 6-digit code to <strong>{email}</strong>
               </p>
-            )}
+            </CardHeader>
 
-            {/* Resend option */}
-            {(state === 'otp_sent' || isCodeStepError) && (
-              <Button
-                type="button"
-                variant="link"
-                size="sm"
-                onClick={() => sendOtp(email)}
-                disabled={isLoading}
-                className="self-start -ml-4 mt-2"
-              >
-                Resend code
-              </Button>
-            )}
-          </div>
+            <CardContent className="space-y-4">
+              <VerificationCodeInput
+                length={6}
+                onComplete={handleCodeComplete}
+                error={isCodeStepError}
+                disabled={isLoading || state === 'verified'}
+                autoFocus={autoFocus}
+              />
+
+              {isCodeStepError && error && (
+                <p className="text-sm text-destructive">{error}</p>
+              )}
+
+              {state === 'verified' && message && (
+                <p className="text-sm text-green-600 dark:text-green-400">
+                  {message}
+                </p>
+              )}
+
+              {/* Resend option */}
+              {(state === 'otp_sent' || isCodeStepError) && (
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={() => sendOtp(email)}
+                  disabled={isLoading}
+                  className="self-start -ml-4"
+                >
+                  Resend code
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
     </div>

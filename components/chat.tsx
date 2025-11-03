@@ -52,6 +52,8 @@ export function Chat({
   const { setDataStream } = useDataStream();
 
   const [input, setInput] = useState<string>('');
+  const [flowState, setFlowState] = useState<'chat' | 'otp' | 'form'>('chat');
+  const [verifiedEmail, setVerifiedEmail] = useState<string | null>(null);
 
   const {
     messages,
@@ -71,6 +73,11 @@ export function Chat({
     onData: (dataPart) => {
       console.log('Received data part:', dataPart);
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
+
+      // When request_service_change is detected, transition to OTP flow
+      if (dataPart.type === 'data-request_service_change' && dataPart.data === true) {
+        setFlowState('otp');
+      }
     },
     onFinish: (result) => {
       console.log('Chat finished with result:', result);
@@ -87,6 +94,29 @@ export function Chat({
       }
     },
   });
+
+  // Handle OTP verification completion
+  const handleOtpVerified = (email: string) => {
+    setVerifiedEmail(email);
+    setFlowState('form');
+  };
+
+  // Handle form submission completion
+  const handleFormSuccess = () => {
+    // Reset back to chat state
+    setFlowState('chat');
+    setVerifiedEmail(null);
+    toast({
+      type: 'success',
+      description: 'Service submitted successfully! You can continue chatting.',
+    });
+  };
+
+  // Handle form cancellation
+  const handleFormCancel = () => {
+    setFlowState('chat');
+    setVerifiedEmail(null);
+  };
 
   const searchParams = useSearchParams();
   const query = searchParams.get('query');
@@ -172,52 +202,76 @@ export function Chat({
           session={session}
         />
 
-        <Messages
-          chatId={id}
-          status={status}
-          votes={votes}
-          messages={messages}
-          setMessages={setMessages}
-          regenerate={regenerate}
-          isReadonly={isReadonly}
-          isArtifactVisible={isArtifactVisible}
-        />
+        {/* Scrollable content area that contains messages and form/otp */}
+        <div className="flex flex-col min-w-0 flex-1 overflow-y-auto">
+          <Messages
+            chatId={id}
+            status={status}
+            votes={votes}
+            messages={messages}
+            setMessages={setMessages}
+            regenerate={regenerate}
+            isReadonly={isReadonly}
+            isArtifactVisible={isArtifactVisible}
+          />
 
-        {services.length > 0 && (
-          <div className="mx-auto px-4 w-full md:max-w-3xl mb-4">
-            <ServicesList
-              services={services}
-              top1Similarity={top1Similarity}
-              disambiguationNeeded={disambiguationNeeded}
-              requestServiceChange={requestServiceChange}
-            />
-          </div>
-        )}
-
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-          {!isReadonly && (
-            <MultimodalInput
-              chatId={id}
-              input={input}
-              setInput={setInput}
-              status={status}
-              stop={stop}
-              attachments={attachments}
-              setAttachments={setAttachments}
-              messages={messages}
-              setMessages={setMessages}
-              sendMessage={sendMessage}
-              selectedVisibilityType={visibilityType}
-            />
+          {services.length > 0 && flowState === 'chat' && (
+            <div className="mx-auto px-4 w-full md:max-w-3xl mb-4">
+              <ServicesList
+                services={services}
+                top1Similarity={top1Similarity}
+                disambiguationNeeded={disambiguationNeeded}
+                requestServiceChange={requestServiceChange}
+              />
+            </div>
           )}
-        </form>
-        <OtpFlow />
-        <ServiceFormContainer
-          onSuccess={(data) => {
-            console.log({ data });
-          }}
-          onCancel={() => console.log('Form cancelled')}
-        />
+
+          {/* OTP Flow - shown when request_service_change is detected */}
+          {flowState === 'otp' && (
+            <div className="mx-auto w-full md:max-w-3xl pb-4">
+              <OtpFlow
+                onVerified={handleOtpVerified}
+                onError={(error) => {
+                  toast({
+                    type: 'error',
+                    description: error,
+                  });
+                }}
+              />
+            </div>
+          )}
+
+          {/* Service Form - shown after OTP verification */}
+          {flowState === 'form' && (
+            <div className="mx-auto px-4 w-full md:max-w-3xl pb-4 md:pb-6">
+              <ServiceFormContainer
+                onSuccess={handleFormSuccess}
+                onCancel={handleFormCancel}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Chat Input - fixed at bottom, shown only in chat state */}
+        {flowState === 'chat' && (
+          <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+            {!isReadonly && (
+              <MultimodalInput
+                chatId={id}
+                input={input}
+                setInput={setInput}
+                status={status}
+                stop={stop}
+                attachments={attachments}
+                setAttachments={setAttachments}
+                messages={messages}
+                setMessages={setMessages}
+                sendMessage={sendMessage}
+                selectedVisibilityType={visibilityType}
+              />
+            )}
+          </form>
+        )}
       </div>
 
       <Artifact

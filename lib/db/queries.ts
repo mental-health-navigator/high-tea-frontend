@@ -469,6 +469,23 @@ export async function updateChatVisiblityById({
   }
 }
 
+export async function updateChatMetadata({
+  chatId,
+  metadata,
+}: {
+  chatId: string;
+  metadata: Record<string, any>;
+}) {
+  try {
+    return await db.update(chat).set({ metadata }).where(eq(chat.id, chatId));
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to update chat metadata by id',
+    );
+  }
+}
+
 export async function getMessageCountByUserId({
   id,
   differenceInHours,

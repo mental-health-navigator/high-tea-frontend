@@ -30,6 +30,33 @@ export type ChatTools = {
   requestSuggestions: requestSuggestionsTool;
 };
 
+export interface ServiceData {
+  service_campus_key: string;
+  organisation?: string | null;
+  name?: string | null;
+  campus_name?: string | null;
+  address?: string | null;
+  suburb?: string | null;
+  state?: string | null;
+  postcode?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  costs?: string | null;
+  referral_pathways?: string | null;
+  target_populations?: string | null;
+  delivery_methods?: string | null;
+  levels_of_care?: string | null;
+  expected_wait_time?: string | null;
+  op_hours_24_7?: boolean | null;
+  op_hours_standard?: boolean | null;
+  op_hours_extended?: boolean | null;
+  op_hours_extended_details?: string | null;
+  notes?: string | null;
+  eligibility_and_description?: string | null;
+  cosine_similarity?: number | null;
+}
+
 export type CustomUIDataTypes = {
   textDelta: string;
   imageDelta: string;
@@ -42,6 +69,12 @@ export type CustomUIDataTypes = {
   kind: ArtifactKind;
   clear: null;
   finish: null;
+  services: ServiceData[];
+  top1_similarity: number;
+  disambiguation_needed: boolean;
+  request_service_change: boolean;
+  sessionId: string;
+  conversationLength: number;
 };
 
 export type ChatMessage = UIMessage<

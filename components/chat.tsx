@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
+import { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher } from '@/lib/utils';
 import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
@@ -75,7 +73,10 @@ export function Chat({
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
 
       // When request_service_change is detected, transition to OTP flow
-      if (dataPart.type === 'data-request_service_change' && dataPart.data === true) {
+      if (
+        dataPart.type === 'data-request_service_change' &&
+        dataPart.data === true
+      ) {
         setFlowState('otp');
       }
     },
@@ -134,11 +135,6 @@ export function Chat({
       window.history.replaceState({}, '', `/chat/${id}`);
     }
   }, [query, sendMessage, hasAppendedQuery, id]);
-
-  const { data: votes } = useSWR<Array<Vote>>(
-    messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
-    fetcher,
-  );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
@@ -207,7 +203,6 @@ export function Chat({
           <Messages
             chatId={id}
             status={status}
-            votes={votes}
             messages={messages}
             setMessages={setMessages}
             regenerate={regenerate}
@@ -286,7 +281,6 @@ export function Chat({
         messages={messages}
         setMessages={setMessages}
         regenerate={regenerate}
-        votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
       />

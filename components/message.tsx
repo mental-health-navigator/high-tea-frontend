@@ -2,7 +2,6 @@
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import { memo, useState } from 'react';
-import type { Vote } from '@/lib/db/schema';
 import { DocumentToolCall, DocumentToolResult } from './document';
 import { PencilEditIcon, SparklesIcon } from './icons';
 import { Markdown } from './markdown';
@@ -25,7 +24,6 @@ import { useDataStream } from './data-stream-provider';
 const PurePreviewMessage = ({
   chatId,
   message,
-  vote,
   isLoading,
   setMessages,
   regenerate,
@@ -34,7 +32,6 @@ const PurePreviewMessage = ({
 }: {
   chatId: string;
   message: ChatMessage;
-  vote: Vote | undefined;
   isLoading: boolean;
   setMessages: UseChatHelpers<ChatMessage>['setMessages'];
   regenerate: UseChatHelpers<ChatMessage>['regenerate'];
@@ -303,7 +300,6 @@ const PurePreviewMessage = ({
                 key={`action-${message.id}`}
                 chatId={chatId}
                 message={message}
-                vote={vote}
                 isLoading={isLoading}
               />
             )}
@@ -322,7 +318,6 @@ export const PreviewMessage = memo(
     if (prevProps.requiresScrollPadding !== nextProps.requiresScrollPadding)
       return false;
     if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
-    if (!equal(prevProps.vote, nextProps.vote)) return false;
 
     return false;
   },

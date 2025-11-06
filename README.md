@@ -92,7 +92,6 @@ high-tea-frontend/
 │   │   │   ├── files/       # File uploads
 │   │   │   ├── history/     # Chat history
 │   │   │   ├── suggestions/ # AI suggestions
-│   │   │   └── vote/        # Message voting
 │   │   ├── page.tsx         # Chat home
 │   │   └── chat/[id]/       # Individual chats
 │   ├── about/               # About page

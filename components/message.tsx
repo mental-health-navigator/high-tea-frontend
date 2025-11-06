@@ -17,6 +17,7 @@ import { DocumentPreview } from './document-preview';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import type { ChatMessage } from '@/lib/types';
 import { useDataStream } from './data-stream-provider';
+import { ServicesList } from './services-list';
 
 // Type narrowing is handled by TypeScript's control flow analysis
 // The AI SDK provides proper discriminated unions for tool calls
@@ -74,7 +75,7 @@ const PurePreviewMessage = ({
 
           <div
             className={cn('flex flex-col gap-4 w-full', {
-              'min-h-96': message.role === 'assistant' && requiresScrollPadding,
+              // 'min-h-96': message.role === 'assistant' && requiresScrollPadding,
             })}
           >
             {attachmentsFromMessage.length > 0 && (
@@ -294,6 +295,24 @@ const PurePreviewMessage = ({
                 }
               }
             })}
+
+            {/* Render services list if this is an assistant message with services */}
+            {message.role === 'assistant' &&
+              message.experimental_data?.services &&
+              message.experimental_data.services.length > 0 && (
+                <div className="mt-2">
+                  <ServicesList
+                    services={message.experimental_data.services}
+                    top1Similarity={message.experimental_data.top1_similarity}
+                    disambiguationNeeded={
+                      message.experimental_data.disambiguation_needed
+                    }
+                    requestServiceChange={
+                      message.experimental_data.request_service_change
+                    }
+                  />
+                </div>
+              )}
 
             {!isReadonly && (
               <MessageActions

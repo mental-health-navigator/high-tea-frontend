@@ -78,11 +78,17 @@ export function useSimpleChat(options: UseChatOptions = {}) {
 
         console.log('Received response data:', data);
 
-        // Add assistant message
+        // Add assistant message with services attached as metadata
         const assistantMessage: ChatMessage = {
           id: data.message.id,
           role: 'assistant',
           parts: [{ type: 'text', text: data.message.content }],
+          experimental_data: {
+            services: data.services,
+            top1_similarity: data.top1_similarity,
+            disambiguation_needed: data.disambiguation_needed,
+            request_service_change: data.request_service_change,
+          },
         };
 
         setMessages((prev) => [...prev, assistantMessage]);

@@ -19,6 +19,7 @@ import Image from 'next/image';
 import { ServiceFormContainer } from './service-form-container';
 import { OtpFlow } from './otp-flow';
 import { useSimpleChat } from '@/hooks/use-simple-chat';
+import { generateUUID } from '@/lib/utils';
 
 export function Chat({
   id,
@@ -93,7 +94,24 @@ export function Chat({
   };
 
   // Handle form submission completion
-  const handleFormSuccess = () => {
+  const handleFormSuccess = (
+    apiResponse: any,
+    formData?: Record<string, any>,
+  ) => {
+    // Add a system message to show the form was submitted
+    const formSubmissionMessage: ChatMessage = {
+      id: generateUUID(),
+      role: 'assistant',
+      parts: [
+        {
+          type: 'text',
+          text: `Again, thank you for submitting the service! Your submission for "${formData?.service_name || 'the service'}" has been received and will be reviewed.`,
+        },
+      ],
+    };
+
+    setMessages((prev) => [...prev, formSubmissionMessage]);
+
     // Reset back to chat state
     setFlowState('chat');
     setVerifiedEmail(null);

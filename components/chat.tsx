@@ -1,17 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher } from '@/lib/utils';
 import { Artifact } from './artifact';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
 import type { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
-import { unstable_serialize } from 'swr/infinite';
-import { getChatHistoryPaginationKey } from './sidebar-history';
 import { toast } from './toast';
 import type { Session } from 'next-auth';
 import { useSearchParams } from 'next/navigation';
@@ -23,8 +18,8 @@ import { useDataStream } from './data-stream-provider';
 import Image from 'next/image';
 import { ServiceFormContainer } from './service-form-container';
 import { OtpFlow } from './otp-flow';
-import { ServicesList } from './services-list';
 import { useSimpleChat } from '@/hooks/use-simple-chat';
+import { generateUUID } from '@/lib/utils';
 
 export function Chat({
   id,
@@ -48,7 +43,6 @@ export function Chat({
     initialVisibilityType,
   });
 
-  const { mutate } = useSWRConfig();
   const { setDataStream } = useDataStream();
 
   const [input, setInput] = useState<string>('');
@@ -63,10 +57,6 @@ export function Chat({
     stop,
     regenerate,
     resumeStream,
-    services,
-    top1Similarity,
-    disambiguationNeeded,
-    requestServiceChange,
   } = useSimpleChat({
     id,
     messages: initialMessages,
@@ -75,14 +65,16 @@ export function Chat({
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
 
       // When request_service_change is detected, transition to OTP flow
-      if (dataPart.type === 'data-request_service_change' && dataPart.data === true) {
+      if (
+        dataPart.type === 'data-request_service_change' &&
+        dataPart.data === true
+      ) {
         setFlowState('otp');
       }
     },
     onFinish: (result) => {
       console.log('Chat finished with result:', result);
       console.log('Current messages:', messages);
-      mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
     onError: (error) => {
       console.error('Chat error:', error);
@@ -102,7 +94,24 @@ export function Chat({
   };
 
   // Handle form submission completion
-  const handleFormSuccess = () => {
+  const handleFormSuccess = (
+    apiResponse: any,
+    formData?: Record<string, any>,
+  ) => {
+    // Add a system message to show the form was submitted
+    const formSubmissionMessage: ChatMessage = {
+      id: generateUUID(),
+      role: 'assistant',
+      parts: [
+        {
+          type: 'text',
+          text: `Again, thank you for submitting the service! Your submission for "${formData?.service_name || 'the service'}" has been received and will be reviewed.`,
+        },
+      ],
+    };
+
+    setMessages((prev) => [...prev, formSubmissionMessage]);
+
     // Reset back to chat state
     setFlowState('chat');
     setVerifiedEmail(null);
@@ -131,14 +140,9 @@ export function Chat({
       });
 
       setHasAppendedQuery(true);
-      window.history.replaceState({}, '', `/chat/${id}`);
+      window.history.replaceState({}, '', `/`);
     }
   }, [query, sendMessage, hasAppendedQuery, id]);
-
-  const { data: votes } = useSWR<Array<Vote>>(
-    messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
-    fetcher,
-  );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
@@ -207,24 +211,12 @@ export function Chat({
           <Messages
             chatId={id}
             status={status}
-            votes={votes}
             messages={messages}
             setMessages={setMessages}
             regenerate={regenerate}
             isReadonly={isReadonly}
             isArtifactVisible={isArtifactVisible}
           />
-
-          {services.length > 0 && flowState === 'chat' && (
-            <div className="mx-auto px-4 w-full md:max-w-3xl mb-4">
-              <ServicesList
-                services={services}
-                top1Similarity={top1Similarity}
-                disambiguationNeeded={disambiguationNeeded}
-                requestServiceChange={requestServiceChange}
-              />
-            </div>
-          )}
 
           {/* OTP Flow - shown when request_service_change is detected */}
           {flowState === 'otp' && (
@@ -286,7 +278,6 @@ export function Chat({
         messages={messages}
         setMessages={setMessages}
         regenerate={regenerate}
-        votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
       />

@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase/client';
 
 export interface ServiceFormContainerProps {
   className?: string;
-  onSuccess?: (data: IngestResponse) => void;
+  onSuccess?: (data: IngestResponse, formData?: Record<string, any>) => void;
   onCancel?: () => void;
 }
 
@@ -64,8 +64,8 @@ export function ServiceFormContainer({
         console.log('Errors:', data.errors);
       }
 
-      // Call the success callback if provided
-      onSuccess?.(data);
+      // Call the success callback if provided, passing both API response and form data
+      onSuccess?.(data, formData);
     },
     onError: (error: Error) => {
       toast.error('Failed to submit service data', {

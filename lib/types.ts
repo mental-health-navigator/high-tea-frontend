@@ -81,7 +81,14 @@ export type ChatMessage = UIMessage<
   MessageMetadata,
   CustomUIDataTypes,
   ChatTools
->;
+> & {
+  experimental_data?: {
+    services?: ServiceData[];
+    top1_similarity?: number;
+    disambiguation_needed?: boolean;
+    request_service_change?: boolean;
+  };
+};
 
 export interface Attachment {
   name: string;

@@ -4,8 +4,6 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { PageHeader } from '@/components/page-header';
 import Script from 'next/script';
 
-export const experimental_ppr = true;
-
 export default async function HelpLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
   const isCollapsed = cookieStore.get('sidebar:state')?.value !== 'true';
